@@ -54,12 +54,14 @@ class Game(object):
 		
 	def start(self, nick):
 		self.running = True
-		self.broadcast('started', nick)	
-		#self.player_x = random.sample(self.players,1)[0]
-		#self.player_x = self.players.pop().nick
-		#self.player_x.push_message('you_are_x')
-		#self.broadcast('is_x', self.player_x)
-		print self.player_x
+		self.broadcast('started', nick)
+		FIGURES = ['blue','green','red','white','yellow']
+		players = self.players
+		random.shuffle(players)
+		colors = ['misterx'] + random.sample(FIGURES, len(players))
+		assoc = zip(colors, players)
+		print assoc
+		return assoc
 	
 	def broadcast(self, cmd, *par):
 		for p in self.players:
@@ -69,7 +71,6 @@ class Game(object):
 		self.broadcast('chat', (nick, msg))
 	
 	def pmove(self, sid, x, y):
-		#print "pmove!!!!"
 		self.broadcast('pmove', (sid, x, y))
 
 

@@ -191,6 +191,26 @@ class ChatWidget(gtk.VBox):
 	#	self.send_btn.add(hbox)
 		hbox.pack_end(self.send_btn, expand=False, fill=False)
 
+class PlayerlistWidget(gtk.VBox):
+
+	def __init__(self):
+		gtk.VBox.__init__(self)
+		
+		self.liststore = gtk.ListStore(str, 'gboolean')
+		self.treeview = gtk.TreeView(self.liststore)
+		self.tvcolumn1 = gtk.TreeViewColumn('Text Only')
+		
+		self.liststore.append(['Open a File', True])
+		self.liststore.append(['New File', True])
+		self.liststore.append(['Print File', False])
+		self.treeview.append_column(self.tvcolumn1)
+		self.cell1 = gtk.CellRendererText()
+		#self.cell1.set_property('cell-background', 'pink')
+		self.tvcolumn1.pack_start(self.cell1, True)
+		#self.tvcolumn1.set_attributes(self.cell1, text=2,
+        #                              cell_background_set=3)
+	
+		self.pack_start(self.treeview)
 
 class GameMainMenuBar(gtk.MenuBar):
 
@@ -359,13 +379,19 @@ class GameWindow(gtk.Window):
 		self.map = uimap.MapWidget('img/map.png', self)
 		self.map.set_size_request(-1, size[1] + 100)
 		self.up_hbox.pack_end(self.map, fill=True, expand=True)
+
+		# –––– Chat / Playerlist ––––
+		self.cplbox = gtk.HBox()
+		self.vpan.add2(self.cplbox)
 		
 		# ———— Chat ————
 		self.chat = ChatWidget()
-		self.vpan.add2(self.chat)
-		#own_hbox.pack_end(self.chat, expand=True, fill=True)
-		
 		self.chat.send_btn.connect('clicked', self.send_message)
+		self.cplbox.pack_end(self.chat, expand=True, fill=True)
+
+		# ———— Playerlist ————
+		self.playerlist = PlayerlistWidget()
+		self.cplbox.pack_start(self.playerlist, expand=False, fill=False)
 
 		# ———— Events ————
 		self.menu_bar.about.connect('activate', self.ev_about)
