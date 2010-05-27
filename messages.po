@@ -1,0 +1,225 @@
+# German CatchX Translation
+# Copyright (C) 2010 Lukas Martini
+# Lukas Martini <lukas.martini@junge-piraten.de>, 2010
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SVN DEV\n"
+"POT-Creation-Date: 2010-04-26 11:18+CEST\n"
+"PO-Revision-Date: 2010-04-26 11:28+0100\n"
+"Last-Translator: Lukas Martini <lukas.martini@junge-piraten.de>\n"
+"Language-Team: de <lukas.martini@junge-piraten.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: start.py:32
+msgid "Starting {0} v{1}"
+msgstr "Starte {0} v{1}"
+
+#: start.py:46
+#: ui.py:30
+msgid "CatchX"
+msgstr "CatchX"
+
+#: start.py:51
+msgid "CatchX Login"
+msgstr "CatchX Login"
+
+#: ui.py:31
+msgid "\302\251 2009 CatchX Team"
+msgstr "\302\251 2009 CatchX Team"
+
+#: ui.py:32
+msgid "http://www.catchx.net"
+msgstr "http://www.catchx.net"
+
+#: ui.py:39
+msgid "\342\200\234Quick, before it's too late!\342\200\235"
+msgstr "\342\200\234Schnell, bevor es zu spät ist!\342\200\235"
+
+#: ui.py:40
+msgid "Contributors:"
+msgstr "Beteiligte:"
+
+#: ui.py:40
+msgid "Main developers:"
+msgstr "Hauptentwickler"
+
+#: ui.py:65
+msgid "Room:"
+msgstr "Raum:"
+
+#: ui.py:72
+msgid "Password:"
+msgstr "Passwort:"
+
+#: ui.py:80
+msgid "Nickname:"
+msgstr "Name:"
+
+#: ui.py:87
+msgid "Create room"
+msgstr "Raum erstellen"
+
+#: ui.py:99
+msgid "Server:"
+msgstr "Server:"
+
+#: ui.py:107
+msgid "Port:"
+msgstr "Port:"
+
+#: ui.py:121
+msgid "Advanced"
+msgstr "Erweitert"
+
+#: ui.py:125
+msgid "Connect"
+msgstr "Verbinden"
+
+#: ui.py:130
+msgid "bank robbery"
+msgstr "Bankraub"
+
+#: ui.py:130
+msgid "burglary"
+msgstr "Diebstahl"
+
+#: ui.py:130
+msgid "bus"
+msgstr "Bus"
+
+#: ui.py:130
+#, fuzzy
+msgid "grand theft"
+msgstr "Großer Diebstahl"
+
+#: ui.py:130
+msgid "ship"
+msgstr "Schiff"
+
+#: ui.py:130
+#, fuzzy
+msgid "simple theft"
+msgstr "Einfacher Diebstahl"
+
+#: ui.py:130
+msgid "taxi"
+msgstr "Taxi"
+
+#: ui.py:130
+msgid "tram"
+msgstr "U-Bahn"
+
+#: ui.py:156
+msgid ""
+"To start the game, press Game -> Start game!\n"
+"But wait for the other players first, when the game is started, no new players can join the room!"
+msgstr ""
+"Um die Runde zu starten, klicke Spiel → Runde starten!\n"
+"Aber warte zuerst auf die anderen Spieler, wenn die Runde gestartet ist, kann niemand neues mehr den Raum betreten!"
+
+#: ui.py:167
+msgid "* Welcome to CatchX!"
+msgstr "* Willkommen in CatchX"
+
+#: ui.py:177
+msgid "Send"
+msgstr "Senden"
+
+#: ui.py:198
+msgid "Game"
+msgstr "Spiel"
+
+#: ui.py:202
+msgid "Start game"
+msgstr "Runde starten"
+
+#: ui.py:205
+msgid "Destroy room"
+msgstr "Raum zerstören"
+
+#: ui.py:208
+msgid "Leave CatchX"
+msgstr "CatchX verlassen"
+
+#: ui.py:213
+msgid "View"
+msgstr "Ansicht"
+
+#: ui.py:217
+msgid "Show Chat"
+msgstr "Zeige Chat"
+
+#: ui.py:220
+msgid "Show Playerlist"
+msgstr "Zeige Spielerliste"
+
+#: ui.py:225
+msgid "Mister X"
+msgstr "Mister X"
+
+#: ui.py:229
+msgid "Bank robbery"
+msgstr "Bankraub"
+
+#: ui.py:232
+#, fuzzy
+msgid "Simple theft"
+msgstr "Einfacher Diebstahl"
+
+#: ui.py:235
+#, fuzzy
+msgid "Grand theft"
+msgstr "Großer Diebstahl"
+
+#: ui.py:238
+msgid "Burglary"
+msgstr "Diebstahl"
+
+#: ui.py:243
+msgid "Help"
+msgstr "Hilfe"
+
+#: ui.py:248
+msgid "About"
+msgstr "Über"
+
+#: ui.py:292
+msgid "* {0} started the game"
+msgstr "* {0} hat die Runde gestartet"
+
+#: ui.py:300
+msgid "* {0} is the Mister X"
+msgstr "* {0} ist Mister X"
+
+#: ui.py:306
+msgid "* {0} entered the room"
+msgstr "* {0} hat den Raum betreten"
+
+#: ui.py:308
+msgid "* {0} left the room"
+msgstr "* {0} hat den Raum verlassen"
+
+#: uimap.py:55
+msgid "Map \302\251 2005 Andr\303\251 Fl\303\266ter"
+msgstr "Karte \302\251 2005 Andr\303\251 Fl\303\266ter"
+
+#: uimap.py:98
+msgid "Bus"
+msgstr "Bus"
+
+#: uimap.py:103
+msgid "Tram"
+msgstr "U-Bahn"
+
+#: uimap.py:108
+msgid "Taxi"
+msgstr "Taxi"
+
+#: uimap.py:113
+msgid "Ship"
+msgstr "Schiff"
+
