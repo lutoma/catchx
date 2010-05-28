@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./server.py &
+./server.py 2> /dev/null &
 ./start.py
 kill %%
