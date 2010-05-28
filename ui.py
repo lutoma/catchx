@@ -305,36 +305,55 @@ class GameWindow(gtk.Window):
 		self.server.say(self.session, self.chat.msg_entry.get_text())
 		self.chat.msg_entry.set_text('')
 
+	# –––– S→C Commands ––––
+	def scc_started(self, par):
+		self.chat_update(_("* {0} started the game").format(par))
+		self.started = True
+
+	def scc_chat(self, par):
+		if '/me ' in par[1]:
+			self.chat_update("* {0} {1}".format(par[0], par[1][4:]))
+		else:
+			self.chat_update("{0}: {1}".format(par[0], par[1]))
+
+	def scc_pmove(self, par):
+		self.map.map_layout.remove(self.map.figure)
+		self.map.map_layout.put(self.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
+				
+	def scc_joined(self, par):
+		self.chat_update(_("* {0} entered the room").format(par))
+		
+	def scc_left(self, par):
+		self.chat_update(_("* {0} left the room").format(par))
+		
+	def scc_color_assoc(self, par):
+		for player in par: #why not par[0] ? → odd!
+			if player[0] == 'misterx':
+				self.chat_update(_("* {0} is the Mister X!").format(player[1]))
+			else:
+				self.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
+
+	# –––– Command → Function assoc ––––
+	commands = {
+		'started': scc_started,
+		'chat': scc_chat,
+		'pmove': scc_pmove,
+		'joined': scc_joined,
+		'left': scc_left,
+		'color_assoc': scc_color_assoc,
+		'test': print, #debug, 4 sure
+	}
+
 	def handle_messages(self):
 		while self.session:
 			cmd, par = self.server.poll_message(self.session)
-		
+			
 			if len(par) > 0:
 				par = par[0] #Kinda odd
-			
-			if cmd == 'started':
-				self.chat_update(_("* {0} started the game").format(par))
-				self.started = True
-			elif cmd == 'chat':
-				if '/me ' in par[1]:
-					self.chat_update("* {0} {1}".format(par[0], par[1][4:]))
-				else:
-					self.chat_update("{0}: {1}".format(par[0], par[1]))
-			elif cmd == 'pmove':
-				self.map.map_layout.remove(self.map.figure)
-				self.map.map_layout.put(self.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
+
+			if cmd in commands:
+				commands[cmd](par)
 				
-			elif cmd == 'joined':
-				self.chat_update(_("* {0} entered the room").format(par))
-			elif cmd == 'left':
-				self.chat_update(_("* {0} left the room").format(par))
-			elif cmd == 'color_assoc':
-				print par
-				for player in par: #why not par[0] ? → odd!
-					if player[0] == 'misterx':
-						self.chat_update(_("* {0} is the Mister X!").format(player[1]))
-					else:
-						self.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
 			time.sleep(0.5)
 
 	def logged_in(self, server, session):
