@@ -56,12 +56,13 @@ class Game(object):
 		self.running = True
 		self.broadcast('started', nick)
 		FIGURES = ['blue','green','red','white','yellow']
-		players = self.players
+		players = []
+		for i in self.players:
+			players.append(i.nick)
 		random.shuffle(players)
-		colors = ['misterx'] + random.sample(FIGURES, len(players))
+		colors = ['misterx'] + random.sample(FIGURES, len(players)-1)
 		assoc = zip(colors, players)
-		print assoc
-		return assoc
+		self.broadcast('color_assoc', assoc)
 	
 	def broadcast(self, cmd, *par):
 		for p in self.players:

@@ -320,8 +320,6 @@ class GameWindow(gtk.Window):
 					self.chat_update("* {0} {1}".format(par[0], par[1][4:]))
 				else:
 					self.chat_update("{0}: {1}".format(par[0], par[1]))
-			elif cmd == 'is_x':
-				self.chat_update(_("* {0} is the Mister X").format(par))
 			elif cmd == 'pmove':
 				self.map.map_layout.remove(self.map.figure)
 				self.map.map_layout.put(self.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
@@ -330,7 +328,13 @@ class GameWindow(gtk.Window):
 				self.chat_update(_("* {0} entered the room").format(par))
 			elif cmd == 'left':
 				self.chat_update(_("* {0} left the room").format(par))
-
+			elif cmd == 'color_assoc':
+				print par
+				for player in par: #why not par[0] ? → odd!
+					if player[0] == 'misterx':
+						self.chat_update(_("* {0} is the Mister X!").format(player[1]))
+					else:
+						self.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
 			time.sleep(0.5)
 
 	def logged_in(self, server, session):
