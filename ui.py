@@ -341,7 +341,6 @@ class GameWindow(gtk.Window):
 		'joined': scc_joined,
 		'left': scc_left,
 		'color_assoc': scc_color_assoc,
-		'test': print, #debug, 4 sure
 	}
 
 	def handle_messages(self):
