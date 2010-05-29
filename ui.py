@@ -41,7 +41,7 @@ CatchX is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 You should have received a copy of the GNU General Public License along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 """)
 		self.set_comments(_("“Quick, before it's too late!”"))
-		self.set_authors(((_("Main developers:")),("- Lutoma (Lukas Martini)"), (""), (_("Contributors:")),("- vIiRuS (Phillip Thelen)"), ("- Waldteufel (Benjamin Richter)")))
+		self.set_authors((("- Lukas Martini (Main developer)"), ("- Benjamin Richter (Quality assurance)"), ("- Phillip Thelen (Contributor)")))
 		#self.set_artists((("Pixelmännchen (Robin Eberhard)"),))
 		self.set_logo(gtk.gdk.pixbuf_new_from_file("img/logo.png"))
 		self.set_wrap_license(True)
@@ -196,13 +196,13 @@ class PlayerlistWidget(gtk.VBox):
 	def __init__(self):
 		gtk.VBox.__init__(self)
 		
-		self.liststore = gtk.ListStore(str, 'gboolean')
+		self.liststore = gtk.ListStore(str)
 		self.treeview = gtk.TreeView(self.liststore)
 		self.tvcolumn1 = gtk.TreeViewColumn('Text Only')
 		
-		self.liststore.append(['Open a File', True])
-		self.liststore.append(['New File', True])
-		self.liststore.append(['Print File', False])
+		self.liststore.append(['Open a File'])
+		self.liststore.append(['New File'])
+		self.liststore.append(['Print File'])
 		self.treeview.append_column(self.tvcolumn1)
 		self.cell1 = gtk.CellRendererText()
 		#self.cell1.set_property('cell-background', 'pink')
@@ -350,8 +350,8 @@ class GameWindow(gtk.Window):
 			if len(par) > 0:
 				par = par[0] #Kinda odd
 
-			if cmd in commands:
-				commands[cmd](par)
+			if cmd in self.commands:
+				self.commands[cmd](self, par)
 				
 			time.sleep(0.5)
 
@@ -360,6 +360,7 @@ class GameWindow(gtk.Window):
 		self.session = session
 		self.started = False
 		self.msg_thread.start()
+		self.chat_update(_("* Players: {0}").format(self.server.get_playerlist(self.session)))
 	
 	def __init__(self):
 		gtk.Window.__init__(self)
