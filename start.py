@@ -82,9 +82,9 @@ if __name__ == '__main__':
 	if options.login_pw:
 		login.password_entry.set_text(options.login_pw)
 	if options.show_login_dialog:
+		login.hide()
 		resp = login.run()
 		if not resp: sys.exit(0)
-		login.hide()
 	else:
 		if not ( options.login_room and options.login_nick and options.login_pw ):
 			print "Cannot skip login dialog!"
@@ -93,6 +93,7 @@ if __name__ == '__main__':
 			login.hide()
 		else:
 			resp = 100
+			login.hide()
 	
 	try:
 		server = login.server_entry.get_text()
