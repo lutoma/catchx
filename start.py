@@ -21,6 +21,7 @@ import sys
 import xmlrpclib
 import locale
 import gettext
+from optparse import OptionParser
 
 APP_NAME = 'CatchX' # Just if we have to change the name for somewhat reason
 APP_VER = 0.15
@@ -28,6 +29,26 @@ APP_VER = 0.15
 gtk.gdk.threads_init()
 
 if __name__ == '__main__':
+	
+	
+	parser = OptionParser()
+	parser.add_option("-l", "--skip-login-dialog",
+					  action="store_false", dest="show_login_dialog", default=True,
+					  help="skip login dialog")
+	parser.add_option("-c", "--create-room",
+					  action="store_true", dest="login_createroom", default=False,
+					  help="create new room")
+	parser.add_option("-r", "--room", dest="login_room", default=None,
+					  help="join/create room ROOM", metavar="ROOM")
+	parser.add_option("-u", "--nick", dest="login_nick", default=None,
+					  help="set nick to NICK", metavar="NAME")
+	parser.add_option("-k", "--password", dest="login_pw", default=None,
+					  help="use room password PASSWORD", metavar="PASSWORD")
+	parser.add_option("-s", "--server", dest="login_server", default="master.catchx.net",
+					  help="connect with server SERVER", metavar="SERVER")
+	parser.add_option("-p", "--port", dest="login_port", default=20211,
+					  help="connect with server on port PORT", type="int", metavar="PORT")
+	(options, args) = parser.parse_args()
 	
 	server = None
 	session = None
@@ -47,9 +68,31 @@ if __name__ == '__main__':
 	login.show_all() #REMOVE THIS LATER!
 	login.set_icon_from_file("img/logo.png")
 	login.set_title(_("CatchX Login"))
-	resp = login.run()
-	if not resp: sys.exit(0)
-	login.hide()
+	
+	# set the fields contents on their values submitted from the commandline or to the defaults
+	login.create_btn.set_active(options.login_createroom)
+	login.server_entry.set_text(options.login_server)
+	login.port_entry.set_text(str(options.login_port))
+	if options.login_room:
+		login.game_entry.set_text(options.login_room)
+	if options.login_room:
+		login.game_entry.set_text(options.login_room)
+	if options.login_nick:
+		login.nick_entry.set_text(options.login_nick)
+	if options.login_pw:
+		login.password_entry.set_text(options.login_pw)
+	if options.show_login_dialog:
+		resp = login.run()
+		if not resp: sys.exit(0)
+		login.hide()
+	else:
+		if not ( options.login_room and options.login_nick and options.login_pw ):
+			print "Cannot skip login dialog!"
+			resp = login.run()
+			if not resp: sys.exit(0)
+			login.hide()
+		else:
+			resp = 100
 	
 	try:
 		server = login.server_entry.get_text()
