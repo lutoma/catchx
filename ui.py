@@ -389,9 +389,7 @@ class GameWindow(gtk.Window):
 		
 		# ———— Set the right size for the chat/playerlist ————
 		size = self.get_size()
-		uppersize = 1300 #size returns incorrect values and this doesnt seem to do anything -.-
-		print size[0]
-		print size[1]
+		uppersize = 450 #size returns incorrect values and this doesnt seem to do anything -.-
 		self.vpan.set_position(uppersize)
 		
 		# ———— Actions Menu ————
@@ -421,3 +419,5 @@ class GameWindow(gtk.Window):
 		self.menu_bar.game_leave.connect('activate', self.ev_leave)
 		self.menu_bar.game_stop.connect('activate', self.ev_stop)
 		self.menu_bar.game_start.connect('activate', self.ev_start)
+		self.menu_bar.about.connect('activate', self.ev_about)
+		self.connect('destroy', self.ev_leave)
