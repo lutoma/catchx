@@ -16,6 +16,7 @@
 #    along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from optparse import OptionParser
 
 import uuid
 from collections import deque
@@ -145,8 +146,16 @@ class CatchXServer(object):
 					
 					
 if __name__ == "__main__":
-	server = SimpleXMLRPCServer(('', 20211), allow_none=True)
+	parser = OptionParser()
+	parser.add_option("-p", "--port", dest="port", default=20211,
+					  help="specifies port to listen on", type="int", metavar="PORT")
+	(options, args) = parser.parse_args()
+	
+	server = SimpleXMLRPCServer(('', options.port), allow_none=True)
 	server.register_introspection_functions()
 	server.register_instance(CatchXServer())
-
-	server.serve_forever()
+	try:
+		server.serve_forever()
+	except KeyboardInterrupt:
+		print "Interrupted!"
+		exit()
