@@ -408,6 +408,7 @@ class GameWindow(gtk.Window):
 		# ———— Chat ————
 		self.chat = ChatWidget()
 		self.chat.send_btn.connect('clicked', self.send_message)
+		self.chat.msg_entry.connect('activate', self.send_message)
 		self.cplbox.pack_end(self.chat, expand=True, fill=True)
 
 		# ———— Playerlist ————
