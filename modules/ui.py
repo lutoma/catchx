@@ -239,10 +239,12 @@ class GameMainMenuBar(gtk.MenuBar):
 		view_item.set_submenu(view_menu)
 		self.append(view_item)
 		
-		self.view_chat = gtk.MenuItem(_('Show Chat'))
+		self.view_chat = gtk.CheckMenuItem(_('Show Chat'))
+		self.view_chat.set_active(True)
 		view_menu.append(self.view_chat)
 		
-		self.view_playerlist = gtk.MenuItem(_('Show Playerlist'))
+		self.view_playerlist = gtk.CheckMenuItem(_('Show Playerlist'))
+		self.view_playerlist.set_active(True)
 		view_menu.append(self.view_playerlist)
 
 		#MisterX-Menu
@@ -299,6 +301,18 @@ class GameWindow(gtk.Window):
 
 	def ev_stop(self, ev):
 		self.server.stop_game(self.session)
+
+	def ev_toggle_chat(self, ev):
+		if ev.get_active():
+			self.cplbox.show()
+		else:
+			self.cplbox.hide()
+
+	def ev_toggle_playerlist(self, ev):
+		if ev.get_active():
+			self.playerlist.show()
+		else:
+			self.playerlist.hide()
 		
 	def chat_update(self, text):
 		self.chat.chat_text += "\n" + text
@@ -332,7 +346,7 @@ class GameWindow(gtk.Window):
 		self.chat_update(_("* {0} left the room").format(par))
 		
 	def scc_color_assoc(self, par):
-		self.session
+		#self.session
 		for player in par:
 			if player[0] == 'misterx':
 				self.chat_update(_("* {0} is the Mister X!").format(player[1]))
@@ -426,4 +440,6 @@ class GameWindow(gtk.Window):
 		self.menu_bar.game_leave.connect('activate', self.ev_leave)
 		self.menu_bar.game_stop.connect('activate', self.ev_stop)
 		self.menu_bar.game_start.connect('activate', self.ev_start)
+		self.menu_bar.view_chat.connect('activate', self.ev_toggle_chat)
+		self.menu_bar.view_playerlist.connect('activate', self.ev_toggle_playerlist)
 		self.connect('destroy', self.ev_leave)
