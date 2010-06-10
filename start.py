@@ -16,13 +16,12 @@
 #	You should have received a copy of the GNU General Public License
 #	along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 import gtk
-import ui
 import sys
 import xmlrpclib
 import locale
 import gettext
 from optparse import OptionParser
-
+from modules import ui as ui
 APP_NAME = 'CatchX' # Just if we have to change the name for somewhat reason
 APP_VER = 0.15
 
@@ -67,7 +66,7 @@ if __name__ == '__main__':
 	login = ui.LoginDialog()
 	login.show_all() #REMOVE THIS LATER!
 	login.set_icon_from_file("img/logo.png")
-	login.set_title(_("CatchX Login"))
+	login.set_title(_("{0} Login".format(APP_NAME)))
 	
 	# set the fields contents on their values submitted from the commandline or to the defaults
 	login.create_btn.set_active(options.login_createroom)
