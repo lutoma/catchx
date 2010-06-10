@@ -1,7 +1,7 @@
 Installation
 ============
 1. Give CatchX execution rights: `chmod +x *.py tools/*.sh`
-2. Run `./gen-i18n.sh` to create locales.
+2. Run `tools/gen-i18n.sh` to create locales.
 
 Using
 =====
