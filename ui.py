@@ -327,7 +327,7 @@ class GameWindow(gtk.Window):
 		self.chat_update(_("* {0} left the room").format(par))
 		
 	def scc_color_assoc(self, par):
-		for player in par: #why not par[0] ? → odd!
+		for player in par:
 			if player[0] == 'misterx':
 				self.chat_update(_("* {0} is the Mister X!").format(player[1]))
 			else:
@@ -348,7 +348,7 @@ class GameWindow(gtk.Window):
 			cmd, par = self.server.poll_message(self.session)
 			
 			if len(par) > 0:
-				par = par[0] #Kinda odd
+				par = par[0]
 
 			if cmd in self.commands:
 				self.commands[cmd](self, par)
@@ -360,7 +360,7 @@ class GameWindow(gtk.Window):
 		self.session = session
 		self.started = False
 		self.msg_thread.start()
-		self.chat_update(_("* Players: {0}").format(self.server.get_playerlist(self.session)))
+		self.chat_update(_("* Players: {0}").format(', '.join(self.server.get_playerlist(self.session))))
 	
 	def __init__(self):
 		gtk.Window.__init__(self)
