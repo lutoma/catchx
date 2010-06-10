@@ -20,10 +20,10 @@ import gobject
 import gtk
 import math
 import uimap
-import threading
 import time
 import locale
 import gettext
+from modules import connector as connector
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
@@ -290,17 +290,17 @@ class GameWindow(gtk.Window):
 		dlg.hide()
 
 	def ev_start(self, ev):
-		self.server.start_game(self.session)
+		self.connection.cmd("start_game", (self.session))
 		#self.actions.btn.set_sensitive(True)
 		#self.vpan.add1(self.up_hpan)
 
 	def ev_leave(self, ev):
-		self.server.logout(self.session)
+		self.connection.cmd("logout", (self.session))
 		self.session = None
 		gtk.main_quit()
 
 	def ev_stop(self, ev):
-		self.server.stop_game(self.session)
+		self.connection.cmd("stop_game", (self.session))
 
 	def ev_toggle_chat(self, ev):
 		if ev.get_active():
@@ -321,71 +321,16 @@ class GameWindow(gtk.Window):
 
 
 	def send_message(self, widget):
-		self.server.say(self.session, self.chat.msg_entry.get_text())
+		self.connection.cmd("say", (self.session, self.chat.msg_entry.get_text()))
 		self.chat.msg_entry.set_text('')
 
-	# –––– S→C Commands ––––
-	def scc_started(self, par):
-		self.chat_update(_("* {0} started the game").format(par))
-		self.started = True
-
-	def scc_chat(self, par):
-		if '/me ' in par[1]:
-			self.chat_update("* {0} {1}".format(par[0], par[1][4:]))
-		else:
-			self.chat_update("{0}: {1}".format(par[0], par[1]))
-
-	def scc_pmove(self, par):
-		self.map.map_layout.remove(self.map.figure)
-		self.map.map_layout.put(self.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
-				
-	def scc_joined(self, par):
-		self.chat_update(_("* {0} entered the room").format(par))
-		
-	def scc_left(self, par):
-		self.chat_update(_("* {0} left the room").format(par))
-		
-	def scc_color_assoc(self, par):
-		#self.session
-		for player in par:
-			if player[0] == 'misterx':
-				self.chat_update(_("* {0} is the Mister X!").format(player[1]))
-			else:
-				self.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
-
-	# –––– Command → Function assoc ––––
-	commands = {
-		'started': scc_started,
-		'chat': scc_chat,
-		'pmove': scc_pmove,
-		'joined': scc_joined,
-		'left': scc_left,
-		'color_assoc': scc_color_assoc,
-	}
-
-	def handle_messages(self):
-		while self.session:
-			cmd, par = self.server.poll_message(self.session)
-			
-			if len(par) > 0:
-				par = par[0]
-
-			if cmd in self.commands:
-				self.commands[cmd](self, par)
-				
-			time.sleep(0.5)
-
-	def logged_in(self, server, session):
-		self.server = server
-		self.session = session
-		self.started = False
-		self.msg_thread.start()
-		self.chat_update(_("* Players: {0}").format(', '.join(self.server.get_playerlist(self.session))))
+	def logged_in(self, connection):
+		self.connection = connection
+		self.connection.run()
+		self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.session)))))
 	
 	def __init__(self):
 		gtk.Window.__init__(self)
-		
-		self.msg_thread = threading.Thread(target=self.handle_messages)
 
 		# ———— Main Box ————
 		main_box = gtk.VBox()

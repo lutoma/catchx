@@ -17,11 +17,11 @@
 #	along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 import gtk
 import sys
-import xmlrpclib
 import locale
 import gettext
 from optparse import OptionParser
 from modules import ui as ui
+from modules import connector as connector
 APP_NAME = 'CatchX' # Just if we have to change the name for somewhat reason
 APP_VER = 0.15
 
@@ -99,18 +99,16 @@ if __name__ == '__main__':
 	except:
 		server = 'master.catchx.net'
 		port = 20211
-		
-	server = xmlrpclib.ServerProxy('http://{0}:{1}'.format(
-		server, port))
 
-	if resp == 100:
-		if login.create_btn.get_active():
-			server.create_game(login.game_entry.get_text(),
-				login.password_entry.get_text())
 	
-		session = server.login(login.game_entry.get_text(),
-			login.password_entry.get_text(), login.nick_entry.get_text())
+	if resp == 100:
+		connection = connector.connector(server, port)
+		if login.create_btn.get_active():
+			connection.cmd("create_game", (login.game_entry.get_text(),
+				login.password_entry.get_text()))
+	
+		connection.login(login.game_entry.get_text(), login.password_entry.get_text(), login.nick_entry.get_text())
 
-		game_win.logged_in(server, session)
+		game_win.logged_in(connection)
 			
 		gtk.main()
