@@ -227,6 +227,7 @@ class GameMainMenuBar(gtk.MenuBar):
 		game_menu.append(self.game_start)
 
 		self.game_stop = gtk.MenuItem(_('Destroy room'))
+		self.game_stop.set_sensitive(False)
 		game_menu.append(self.game_stop)
 		
 		self.game_leave = gtk.MenuItem(_('Leave CatchX'))
@@ -251,15 +252,19 @@ class GameMainMenuBar(gtk.MenuBar):
 		self.append(misterx_item)
 		
 		self.misterx_bankrobbery = gtk.MenuItem(_('Bank robbery'))
+		self.misterx_bankrobbery.set_sensitive(False)
 		misterx_menu.append(self.misterx_bankrobbery)
 		
 		self.misterx_stheft = gtk.MenuItem(_('Simple theft'))
+		self.misterx_stheft.set_sensitive(False)
 		misterx_menu.append(self.misterx_stheft)
 		
 		self.misterx_gtheft = gtk.MenuItem(_('Grand theft'))
+		self.misterx_gtheft.set_sensitive(False)
 		misterx_menu.append(self.misterx_gtheft)
 		
 		self.misterx_burglary = gtk.MenuItem(_('Burglary'))
+		self.misterx_burglary.set_sensitive(False)
 		misterx_menu.append(self.misterx_burglary)
 
 		# Help
@@ -327,6 +332,7 @@ class GameWindow(gtk.Window):
 		self.chat_update(_("* {0} left the room").format(par))
 		
 	def scc_color_assoc(self, par):
+		self.session
 		for player in par:
 			if player[0] == 'misterx':
 				self.chat_update(_("* {0} is the Mister X!").format(player[1]))
@@ -420,5 +426,4 @@ class GameWindow(gtk.Window):
 		self.menu_bar.game_leave.connect('activate', self.ev_leave)
 		self.menu_bar.game_stop.connect('activate', self.ev_stop)
 		self.menu_bar.game_start.connect('activate', self.ev_start)
-		self.menu_bar.about.connect('activate', self.ev_about)
 		self.connect('destroy', self.ev_leave)
