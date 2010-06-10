@@ -168,7 +168,7 @@ class ChatWidget(gtk.VBox):
 		self.chat_box = gtk.TextView()
 		self.chat_buffer = self.chat_box.get_buffer()
 		self.chat_box.set_editable(False)
-		self.chat_text = _("* Welcome to CatchX!")
+		self.chat_text = _(" * Welcome to CatchX!")
 		self.chat_buffer.set_text(self.chat_text)
 		
 		self.pack_start(self.chat_box, expand=True, fill=True)		
@@ -315,7 +315,7 @@ class GameWindow(gtk.Window):
 			self.playerlist.hide()
 		
 	def chat_update(self, text):
-		self.chat.chat_text += "\n" + text
+		self.chat.chat_text += "\n " + text
 		self.chat.chat_buffer.set_text(self.chat.chat_text)
 		self.chat.chat_box.scroll_mark_onscreen(self.chat.chat_buffer.get_insert())
 
