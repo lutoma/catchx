@@ -9,4 +9,4 @@ If you want to start CatchX normally:
 	./start.py
 
 If you want to start CatchX in developer mode:
-	./devel.sh
+	tools/devel.sh
