@@ -40,9 +40,9 @@ class Player(object):
 
 class Game(object):
 	
-	def __init__(self, passwd):
+	def __init__(self, description):
 		self.players = set()
-		self.passwd = passwd
+		self.description = description
 		self.running = False
 		
 	def add_player(self, player):
@@ -102,20 +102,18 @@ class CatchXServer(object):
 	def ping(self):
 		return 'pong'
 	
-	def create_game(self, gid, passwd):
+	def create_game(self, gid, description):
 		if gid in self.games: return None
 		
-		self.games[gid] = Game(passwd)	
+		self.games[gid] = Game(description)	
 		return gid
 	
-	def login(self, gid, passwd, nick):
+	def login(self, gid, nick):
 		if not gid in self.games: return 'wrong!' 
 		
 		game = self.games[gid]
 		
 		if game.running: return 'running!'
-		if passwd != game.passwd:
-			return 'wrong!'
 		
 		player = Player(nick)
 		game.add_player(player)
@@ -130,7 +128,15 @@ class CatchXServer(object):
 		for i in self.sessions[sid].game.players:
 			players.append(i.nick)
 		return players
-	
+
+	def get_gamelist(self):
+		games = []
+		for session in self.sessions:
+			game = session.game
+			print game
+			games.append(["Name", game.description, 'Someone', game.players, game.running
+		return games
+
 	def poll_message(self, sid):
 		if self.sessions[sid].player.has_messages(): 
 			return self.sessions[sid].player.pop_message()	

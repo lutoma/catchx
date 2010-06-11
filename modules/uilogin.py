@@ -25,77 +25,90 @@ _ = t.ugettext
 
 class LoginDialog(gtk.Dialog):
 
-	def __init__(self):
+	def __init__(self, connection):
 		gtk.Dialog.__init__(self)
 		
 		# ——— Logo ———	
 		image = gtk.Image()
 		image.set_from_file("img/logo.png")
 		self.vbox.pack_start(image, padding=5)
+		image.show()
 		
 		separator = gtk.HSeparator()
 		self.vbox.pack_start(separator)
+		separator.show()
+
+		## Normal List ##
+		self.buttonbox  = gtk.VBox()
+		self.vbox.pack_start(self.buttonbox)
+
+		buttons = []
+		#games = (['ABC', 'Open for everyone', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), False], ['Cba', 'Our private game', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), True])
+		games = connection.cmd("get_gamelist")
+		if not games == None:
+			for game in games:
+				button = gtk.Button()
+				if game[4]:
+					button.set_sensitive(False)
+					
+				box = gtk.VBox()
+				button.add(box)
+				label = gtk.Label()
+				game[3] = ', '.join(game[3])
+				game[4] = _("Yes") if game[4] else _("No")
+				label.set_markup(_("<big>{0}</big> - '{1}'\n<small>Creator: {2}\nPlayers: {3}\nRunning: {4}</small>").format(*game))
+
+				box.pack_end(label, fill=True, expand=True)
+				
+				self.buttonbox.pack_end(button, fill=True, expand=True)
+				buttons.append(button)
+		else:
+			label = gtk.Label()
+			label.set_markup(_("<big>No active rooms found.</big>"))
+			self.buttonbox.pack_end(label, fill=True, expand=True, padding=10)
+
+		self.buttonbox.show_all()
+		
+		
+		## Advanced ##
 		
 		# ——— Table ———	
-		table = gtk.Table(rows=3, columns=3)
-		self.vbox.pack_start(table, padding=5)
-		table.set_col_spacings(5)
-		table.set_row_spacings(5)
+		self.nrtable = gtk.Table(rows=3, columns=3)
+		self.vbox.pack_start(self.nrtable, padding=5)
+		self.nrtable.hide()
+		self.nrtable.set_col_spacings(5)
+		self.nrtable.set_row_spacings(5)
 		
 		# ——— Game ———
-		label = gtk.Label(_('Room:'))
-		table.attach(label, 0, 1, 0, 1)
+		label = gtk.Label(_('Name:'))
+		self.nrtable.attach(label, 0, 1, 0, 1)
 
 		self.game_entry = gtk.Entry()
-		table.attach(self.game_entry, 1, 2, 0, 1)
+		self.nrtable.attach(self.game_entry, 1, 2, 0, 1)
 		
 
 		# ———— Nickname ————
-		label = gtk.Label(_('Nickname:'))
-		table.attach(label, 0, 1, 1, 2)
+		label = gtk.Label(_('Description:'))
+		self.nrtable.attach(label, 0, 1, 1, 2)
 
-		self.nick_entry = gtk.Entry()
-		table.attach(self.nick_entry, 1, 2, 1, 2)
+		self.description_entry = gtk.Entry()
+		self.nrtable.attach(self.description_entry, 1, 2, 1, 2)
 
-		# ——— Create game ———
-		self.create_btn = gtk.ToggleButton(_('Create room'))
-		self.create_btn.set_mode(True)
-		table.attach(self.create_btn, 3, 4, 1, 2)
-		
-		self.game_entry.grab_focus()
-		
-		# ——— Advanced Table ———
-		table = gtk.Table(rows=1, columns=3)
-		table.set_col_spacings(5)
-		table.set_row_spacings(5)
-		
-		# ——— Server ———
-		label = gtk.Label(_('Server:'))
-		table.attach(label, 0, 1, 0, 1)
-		
-		self.server_entry = gtk.Entry()
-		self.server_entry.set_text('master.catchx.net')
-		table.attach(self.server_entry, 1, 2, 0, 1)		
-
-		# ——— Port ———
-		label = gtk.Label(_('Port:'))
-		table.attach(label, 2, 3, 0, 1)
-
-		self.port_entry = gtk.Entry()
-		self.port_entry.set_text('20211')
-		table.attach(self.port_entry, 3, 4, 0, 1)
-		
 		# ——— Buttons ———
-		def showadvanced(widget):
-			self.advanced = True
-			self.vbox.pack_start(table, padding=5)
-			table.show_all()
-			self.action_area.remove(button)
+		def shownewroom(widget):
+			self.buttonbox.hide()
+			self.nrtable.show_all()
+			new_room_button.hide()
+			self.add_button(_('Create'), 100).grab_default() #STOCK_GO_FORWARD
+
+		reload_button = gtk.Button(_('Reload list'))
+		self.action_area.pack_end(reload_button)
+		#advanced_button.connect("clicked", showadvanced)	
+
+		new_room_button = gtk.Button(_('Create new room'))
+		self.action_area.pack_end(new_room_button)
+		new_room_button.connect("clicked", shownewroom)
 		
-		button = gtk.Button(_('Advanced')) #STOCK_YES
-		self.action_area.pack_end(button)
-		button.connect("clicked", showadvanced)
-		
-		self.add_button(_('Connect'), 100).grab_default() #STOCK_GO_FORWARD
 		self.set_border_width(5)
-		
+
+		self.action_area.show_all()

@@ -28,8 +28,8 @@ class connector(dict):
 		self.ui = ui
 		self.server = xmlrpclib.ServerProxy('http://{0}:{1}'.format(server, port))
 
-	def login(self, game, password, nick):
-		self.session = self.cmd("login", (game, password, nick))
+	def login(self, game, nick):
+		self.session = self.cmd("login", (game, nick))
 		self.started = False
 		return self.session
 
@@ -45,9 +45,8 @@ class connector(dict):
 			self.ui.chat_update("{0}: {1}".format(par[0], par[1]))
 
 	def scc_pmove(self, par):
-		print "DEBUG: {0}:".format(par)
 		self.ui.map.map_layout.remove(self.ui.map.figure)
-		self.ui.map.map_layout.put(self.ui.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
+		self.ui.map.map_layout.put(self.ui.map.figure, int(round(par[1] - 16,0)), int(round(par[2] - 45, 0)))
 				
 	def scc_joined(self, par):
 		self.ui.chat_update(_("* {0} entered the room").format(par))
@@ -76,7 +75,10 @@ class connector(dict):
 	def handle_messages(self):
 		while self.session:
 			cmd, par = self.server.poll_message(self.session)
-			
+
+			if not cmd == None:
+				print "From server: {0}{1}".format(cmd,par)
+
 			if len(par) > 0:
 				par = par[0]
 
@@ -89,10 +91,10 @@ class connector(dict):
 		self.msg_thread = threading.Thread(target=self.handle_messages)
 		self.msg_thread.start()
 
-	def cmd(self, command, params):
-		print params
-		#__import__("sys").exit(0)
-		return getattr(self.server,command)(*params)
+	def cmd(self, command, params=()):
+		print "To server: {0}{1}".format(command,params)
+		answer = getattr(self.server,command)(*params)
+		print "\t{0}".format(answer)
 
 	#def __getitem__(self, key):
     #	#try:

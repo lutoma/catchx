@@ -19,6 +19,7 @@ import gtk
 import sys
 import locale
 import gettext
+import os
 from optparse import OptionParser
 from modules import ui as ui
 from modules import uilogin as uilogin
@@ -32,18 +33,18 @@ if __name__ == '__main__':
 	
 	
 	parser = OptionParser()
+	parser.add_option("-c", "--config", dest="config_file", default="{0}/.catchx.conf".format(os.getenv('USERPROFILE') or os.getenv('HOME')),
+					  help="use CONFIG as config-file", metavar="CONFIG")
 	parser.add_option("-l", "--skip-login-dialog",
 					  action="store_false", dest="show_login_dialog", default=True,
 					  help="skip login dialog")
-	parser.add_option("-c", "--create-room",
+	parser.add_option("-m", "--create-room",
 					  action="store_true", dest="login_createroom", default=False,
 					  help="create new room")
 	parser.add_option("-r", "--room", dest="login_room", default=None,
 					  help="join/create room ROOM", metavar="ROOM")
-	parser.add_option("-u", "--nick", dest="login_nick", default=None,
-					  help="set nick to NICK", metavar="NAME")
-	parser.add_option("-k", "--password", dest="login_pw", default=None,
-					  help="use room password PASSWORD", metavar="PASSWORD")
+	parser.add_option("-n", "--nick", dest="login_nick", default="Anonymous",
+					  help="use NICK as nick for this session", metavar="NAME")
 	parser.add_option("-s", "--server", dest="login_server", default="master.catchx.net",
 					  help="connect with server SERVER", metavar="SERVER")
 	parser.add_option("-p", "--port", dest="login_port", default=20211,
@@ -63,52 +64,30 @@ if __name__ == '__main__':
 	game_win.show_all()
 	game_win.set_icon_from_file("img/logo.png")
 	game_win.set_title(_("CatchX"))
-	
-	login = uilogin.LoginDialog()
-	login.show_all() #REMOVE THIS LATER!
+
+	connection = connector.connector(options.login_server, options.login_port, game_win)
+	login = uilogin.LoginDialog(connection)
 	login.set_icon_from_file("img/logo.png")
 	login.set_title(_("{0} Login".format(APP_NAME)))
-	
-	# set the fields contents on their values submitted from the commandline or to the defaults
-	login.create_btn.set_active(options.login_createroom)
-	login.server_entry.set_text(options.login_server)
-	login.port_entry.set_text(str(options.login_port))
-	if options.login_room:
-		login.game_entry.set_text(options.login_room)
-	if options.login_room:
-		login.game_entry.set_text(options.login_room)
-	if options.login_nick:
-		login.nick_entry.set_text(options.login_nick)
-	if options.login_pw:
-		login.password_entry.set_text(options.login_pw)
 		
-	if options.show_login_dialog:
-		resp = login.run()
-		if not resp: sys.exit(0)
-	else:
-		if not ( options.login_room and options.login_nick and options.login_pw ):
-			print "Cannot skip login dialog!"
-			resp = login.run()
-			if not resp: sys.exit(0)
-		else:
-			resp = 100
+	#if options.show_login_dialog:
+	resp = login.run()
+	if not resp: sys.exit(0)
+	#else:
+	#	if not ( options.login_room and options.login_nick):
+	#		print "Cannot skip login dialog!"
+	#		resp = login.run()
+	#		if not resp: sys.exit(0)
+	#	else:
+	#		resp = 100
 	login.hide()
-	
-	try:
-		server = login.server_entry.get_text()
-		port = login.port_entry.get_text()
-	except:
-		server = 'master.catchx.net'
-		port = 20211
 
 	
 	if resp == 100:
-		connection = connector.connector(server, port, game_win)
-		if login.create_btn.get_active():
-			connection.cmd("create_game", (login.game_entry.get_text(),
-				login.password_entry.get_text()))
+		connection.cmd("create_game", (login.game_entry.get_text(),
+				login.description_entry.get_text()))
 	
-		connection.login(login.game_entry.get_text(), login.password_entry.get_text(), login.nick_entry.get_text())
+		connection.login(login.game_entry.get_text(), options.login_nick)
 		game_win.connection = connection
 		game_win.logged_in(connection)
 			
