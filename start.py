@@ -21,6 +21,7 @@ import locale
 import gettext
 from optparse import OptionParser
 from modules import ui as ui
+from modules import uilogin as uilogin
 from modules import connector as connector
 APP_NAME = 'CatchX' # Just if we have to change the name for somewhat reason
 APP_VER = 0.15
@@ -63,7 +64,7 @@ if __name__ == '__main__':
 	game_win.set_icon_from_file("img/logo.png")
 	game_win.set_title(_("CatchX"))
 	
-	login = ui.LoginDialog()
+	login = uilogin.LoginDialog()
 	login.show_all() #REMOVE THIS LATER!
 	login.set_icon_from_file("img/logo.png")
 	login.set_title(_("{0} Login".format(APP_NAME)))
