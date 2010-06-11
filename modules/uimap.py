@@ -19,6 +19,10 @@ import gtk
 import locale
 import gettext
 
+#######################################
+#### Needed: Cleanup of this file. ####
+#######################################
+
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
 class MapWidget(gtk.Table):
