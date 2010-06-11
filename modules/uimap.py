@@ -31,10 +31,10 @@ class MapWidget(gtk.Table):
 		self.map_layout.put(self.lay, -100, -100)
 		self.map_layout.remove(self.buttonbox)
 		self.map_layout.put(self.buttonbox, -100, -100)
-		self.tself.server.pmove(self.tself.session, self.lastclick['x'], self.lastclick['y']) #yeah! self.tself.!  super() kinda sucks
+		self.tself.connection.cmd("pmove", (self.tself.connection.session, self.lastclick['x'], self.lastclick['y'])) #yeah! self.tself.!  super() kinda sucks
 		
 	def map_click(self, eventbox, button):
-		if not self.tself.started:
+		if not self.tself.connection.started:
 			return False
 	#	if not button.x >= punkt -10 and button.y >= punkt-10 and button.x <= punkt +10 and button.y <= punkt-10:
 		self.map_layout.remove(self.lay)
