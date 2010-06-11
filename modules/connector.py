@@ -17,48 +17,51 @@
 
 import threading
 import xmlrpclib
+import gettext
+import time
+
+t = gettext.translation("catchx", "locale")
+_ = t.ugettext
 
 class connector(dict):
-	def __init__(self, server, port, default=None):
-		self.ui = super(connector, self)
-		dict.__init__(self)
-        self.default = default
-		#__import__("sys").exit(0)
+	def __init__(self, server, port, ui):
+		self.ui = ui
 		self.server = xmlrpclib.ServerProxy('http://{0}:{1}'.format(server, port))
 
 	def login(self, game, password, nick):
 		self.session = self.cmd("login", (game, password, nick))
 		self.started = False
+		return self.session
 
 		# –––– S→C Commands ––––
 	def scc_started(self, par):
-		ui.chat_update(_("* {0} started the game").format(par))
+		self.ui.chat_update(_("* {0} started the game").format(par))
 		self.started = True
 
 	def scc_chat(self, par):
 		if '/me ' in par[1]:
-			ui.chat_update("* {0} {1}".format(par[0], par[1][4:]))
+			self.ui.chat_update("* {0} {1}".format(par[0], par[1][4:]))
 		else:
-			ui.chat_update("{0}: {1}".format(par[0], par[1]))
+			self.ui.chat_update("{0}: {1}".format(par[0], par[1]))
 
 	def scc_pmove(self, par):
 		print "DEBUG: {0}:".format(par)
-		ui.map.map_layout.remove(self.map.figure)
-		ui.map.map_layout.put(self.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
+		self.ui.map.map_layout.remove(self.ui.map.figure)
+		self.ui.map.map_layout.put(self.ui.map.figure, round(par[1] - 16,0), round(par[2] - 45, 0))
 				
 	def scc_joined(self, par):
-		ui.chat_update(_("* {0} entered the room").format(par))
+		self.ui.chat_update(_("* {0} entered the room").format(par))
 		
 	def scc_left(self, par):
-		ui.chat_update(_("* {0} left the room").format(par))
+		self.ui.chat_update(_("* {0} left the room").format(par))
 		
 	def scc_color_assoc(self, par):
 		self.color_assoc = par
 		for player in par:
 			if player[0] == 'misterx':
-				ui.chat_update(_("* {0} is the Mister X!").format(player[1]))
+				self.ui.chat_update(_("* {0} is the Mister X!").format(player[1]))
 			else:
-				ui.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
+				self.ui.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
 
 	# –––– Command → Function assoc ––––
 	commands = {
@@ -87,10 +90,13 @@ class connector(dict):
 		self.msg_thread.start()
 
 	def cmd(self, command, params):
+		print params
+		#__import__("sys").exit(0)
 		return getattr(self.server,command)(*params)
 
 	#def __getitem__(self, key):
-    #	try:
-    #		return dict.__getitem__(self, key)
-    #	except KeyError:
-    #		return getattr(self.server,key)(*params)
+    #	#try:
+	#	print key
+	#	return dict.__getitem__(self, key)
+	#	#except KeyError:
+    #	#	return getattr(self.server,key)(*params)

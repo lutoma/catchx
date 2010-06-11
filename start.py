@@ -102,13 +102,13 @@ if __name__ == '__main__':
 
 	
 	if resp == 100:
-		connection = connector.connector(server, port)
+		connection = connector.connector(server, port, game_win)
 		if login.create_btn.get_active():
 			connection.cmd("create_game", (login.game_entry.get_text(),
 				login.password_entry.get_text()))
 	
 		connection.login(login.game_entry.get_text(), login.password_entry.get_text(), login.nick_entry.get_text())
-
+		game_win.connection = connection
 		game_win.logged_in(connection)
 			
 		gtk.main()

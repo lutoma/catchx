@@ -290,17 +290,17 @@ class GameWindow(gtk.Window):
 		dlg.hide()
 
 	def ev_start(self, ev):
-		self.connection.cmd("start_game", (self.session))
+		self.connection.cmd("start_game", (self.connection.session,))
 		#self.actions.btn.set_sensitive(True)
 		#self.vpan.add1(self.up_hpan)
 
 	def ev_leave(self, ev):
-		self.connection.cmd("logout", (self.session))
-		self.session = None
+		self.connection.cmd("logout", (self.connection.session,))
+		self.connection.session = None
 		gtk.main_quit()
 
 	def ev_stop(self, ev):
-		self.connection.cmd("stop_game", (self.session))
+		self.connection.cmd("stop_game", (self.connection.session,))
 
 	def ev_toggle_chat(self, ev):
 		if ev.get_active():
@@ -321,13 +321,13 @@ class GameWindow(gtk.Window):
 
 
 	def send_message(self, widget):
-		self.connection.cmd("say", (self.session, self.chat.msg_entry.get_text()))
+		self.connection.cmd("say", (self.connection.session, self.chat.msg_entry.get_text()))
 		self.chat.msg_entry.set_text('')
 
 	def logged_in(self, connection):
 		self.connection = connection
 		self.connection.run()
-		self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.session)))))
+		self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.connection.session,)))))
 	
 	def __init__(self):
 		gtk.Window.__init__(self)
