@@ -291,6 +291,8 @@ class GameWindow(gtk.Window):
 
 	def ev_start(self, ev):
 		self.connection.cmd("start_game", (self.connection.session,))
+		self.menu_bar.game_start.set_sensitive(False)
+		self.menu_bar.game_stop.set_sensitive(True)
 		#self.actions.btn.set_sensitive(True)
 		#self.vpan.add1(self.up_hpan)
 
@@ -300,7 +302,10 @@ class GameWindow(gtk.Window):
 		gtk.main_quit()
 
 	def ev_stop(self, ev):
-		self.connection.cmd("stop_game", (self.connection.session,))
+		print "Not implemented yet (And probably it'll never be)."
+		#self.connection.cmd("stop_game", (self.connection.session,))
+		self.menu_bar.game_start.set_sensitive(True)
+		self.menu_bar.game_stop.set_sensitive(False)
 
 	def ev_toggle_chat(self, ev):
 		if ev.get_active():
