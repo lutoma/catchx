@@ -41,7 +41,7 @@ CatchX is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 You should have received a copy of the GNU General Public License along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 """)
 		self.set_comments(_("“Quick, before it's too late!”"))
-		self.set_authors((("- Lukas Martini (Main developer)"), ("- Benjamin Richter (Quality assurance)"), ("- Phillip Thelen (Contributor)")))
+		self.set_authors((("- Lukas Martini (Main developer)"), ("- Raphael Michel (Main developer)"), ("- Benjamin Richter (Quality assurance)"), ("- Phillip Thelen (Contributor)")))
 		#self.set_artists((("Pixelmännchen (Robin Eberhard)"),))
 		self.set_logo(gtk.gdk.pixbuf_new_from_file("img/logo.png"))
 		self.set_wrap_license(True)
