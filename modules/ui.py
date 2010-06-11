@@ -63,20 +63,6 @@ class ActionsWidget(gtk.VBox):
 			btn.add(box)		
 			self.pack_start(btn, fill=False, expand=False)
 
-	
-
-class StartWidget(gtk.VBox):
-	
-	def __init__(self):
-		gtk.VBox.__init__(self)
-		
-		image = gtk.Image()
-		image.set_from_file("img/logo.png")
-		self.add(image)
-		
-		info = gtk.Label(_("""To start the game, press Game -> Start game!\nBut wait for the other players first, when the game is started, no new players can join the room!"""))
-		self.add(info)
-
 class ChatWidget(gtk.VBox):
 
 	def __init__(self):
@@ -269,10 +255,6 @@ class GameWindow(gtk.Window):
 		# ———— Map/Toolbox ————
 		self.up_hbox = gtk.HBox()
 		self.vpan.add1(self.up_hbox)
-		
-		# ———— Startinfo ————
-		self.info = StartWidget()
-		#self.vpan.add1(self.info)
 		
 		# ———— Set the right size for the chat/playerlist ————
 		size = self.get_size()
