@@ -88,6 +88,7 @@ if __name__ == '__main__':
 				login.description_entry.get_text()))
 	
 		connection.login(login.game_entry.get_text(), options.login_nick)
+		print connection
 		game_win.connection = connection
 		game_win.logged_in(connection)
 			

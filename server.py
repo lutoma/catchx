@@ -134,7 +134,7 @@ class CatchXServer(object):
 		for session in self.sessions:
 			game = session.game
 			print game
-			games.append(["Name", game.description, 'Someone', game.players, game.running
+			games.append(["Name", game.description, 'Someone', game.players, game.running])
 		return games
 
 	def poll_message(self, sid):
