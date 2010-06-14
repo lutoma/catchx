@@ -101,17 +101,15 @@ class PlayerlistWidget(gtk.VBox):
 		
 		self.liststore = gtk.ListStore(str)
 		self.treeview = gtk.TreeView(self.liststore)
-		self.tvcolumn1 = gtk.TreeViewColumn('Text Only')
+		self.tvcolumn1 = gtk.TreeViewColumn('Name')
 		
-		self.liststore.append(['Open a File'])
-		self.liststore.append(['New File'])
-		self.liststore.append(['Print File'])
+		self.liststore.append(['Lutoma'])
+		self.liststore.append(['Rami'])
 		self.treeview.append_column(self.tvcolumn1)
 		self.cell1 = gtk.CellRendererText()
-		#self.cell1.set_property('cell-background', 'pink')
 		self.tvcolumn1.pack_start(self.cell1, True)
-		#self.tvcolumn1.set_attributes(self.cell1, text=2,
-        #                              cell_background_set=3)
+		self.tvcolumn1.set_attributes(self.cell1, text=2,
+                                      cell_background_set=3)
 	
 		self.pack_start(self.treeview)
 

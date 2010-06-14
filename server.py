@@ -64,15 +64,6 @@ class Game(object):
 		random.shuffle(players)
 		colors = ['misterx'] + random.sample(FIGURES, len(players)-1)
 		assoc = zip(colors, players)
-		for i in assoc:
-			for j in p_to_n: #inefficency ftw... -.-
-				print "forloop"
-				print i
-				print j
-				if j[0] == i[0]:
-					print "if"
-					print j
-					print i
 		self.broadcast('color_assoc', assoc)
 	
 	def broadcast(self, cmd, *par):
@@ -129,9 +120,7 @@ class CatchXServer(object):
 	def get_gamelist(self):
 		games = []
 		for gameName in self.games:
-			print "1: {0}".format(gameName)
 			game = self.games[gameName]
-			print "2: {0}".format(game.players)
 			players= []
 			for player in game.players:
 				players.append(player.nick)
@@ -147,13 +136,6 @@ class CatchXServer(object):
 		else: return None, ()
 		
 	def say(self, sid, msg):
-		if msg == '0xSPAMANDEGG':
-			msg = """
-            ^__^
-            (oo)\_______
-            (__)\       )\\/\\ 
-                ||----w |
-                ||     ||"""
 		self.sessions[sid].game.chat(self.sessions[sid].player.nick, msg)
 	
 	def pmove(self, sid, x, y):

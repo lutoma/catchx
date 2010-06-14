@@ -106,7 +106,6 @@ class LoginDialog(gtk.Dialog):
 
 		reload_button = gtk.Button(_('Reload list'))
 		self.action_area.pack_end(reload_button)
-		#advanced_button.connect("clicked", showadvanced)	
 
 		new_room_button = gtk.Button(_('Create new room'))
 		self.action_area.pack_end(new_room_button)
