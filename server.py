@@ -103,14 +103,11 @@ class CatchXServer(object):
 		return 'pong'
 	
 	def create_game(self, gid, description):
-		if gid in self.games: return None
-		
-		self.games[gid] = Game(description)	
-		return gid
+		if gid in self.games: return False
+		self.games[gid] = Game(description)
+		return True
 	
 	def login(self, gid, nick):
-		if not gid in self.games: return 'wrong!' 
-		
 		game = self.games[gid]
 		
 		if game.running: return 'running!'
@@ -131,11 +128,18 @@ class CatchXServer(object):
 
 	def get_gamelist(self):
 		games = []
-		for session in self.sessions:
-			game = session.game
-			print game
-			games.append(["Name", game.description, 'Someone', game.players, game.running])
-		return games
+		for gameName in self.games:
+			print "1: {0}".format(gameName)
+			game = self.games[gameName]
+			print "2: {0}".format(game.players)
+			players= []
+			for player in game.players:
+				players.append(player.nick)
+			games.append([gameName, game.description, 'Someone', players, game.running])
+		try:
+			return games
+		except:
+			return []
 
 	def poll_message(self, sid):
 		if self.sessions[sid].player.has_messages(): 

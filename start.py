@@ -83,13 +83,16 @@ if __name__ == '__main__':
 	login.hide()
 
 	
-	if resp == 100:
+	if resp == 200:
 		connection.cmd("create_game", (login.game_entry.get_text(),
 				login.description_entry.get_text()))
+		game = login.game_entry.get_text()
+	elif resp == 100:
+		for button in login.buttons:
+			if button.get_active():
+				game = login.buttons[button]
 	
-		connection.login(login.game_entry.get_text(), options.login_nick)
-		print connection
-		game_win.connection = connection
-		game_win.logged_in(connection)
+	connection.login(game, options.login_nick)
+	game_win.logged_in(connection)
 			
-		gtk.main()
+	gtk.main()

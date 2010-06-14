@@ -235,10 +235,7 @@ class GameWindow(gtk.Window):
 	def logged_in(self, connection):
 		self.connection = connection
 		self.connection.run()
-		try:
-			self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.connection.session,)))))
-		except:
-			print self.connection.session
+		self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.connection.session,)))))
 	
 	def __init__(self):
 		gtk.Window.__init__(self)

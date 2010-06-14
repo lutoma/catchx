@@ -19,6 +19,7 @@ import threading
 import xmlrpclib
 import gettext
 import time
+import sys
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
@@ -31,7 +32,6 @@ class connector(dict):
 	def login(self, game, nick):
 		self.session = self.cmd("login", (game, nick))
 		self.started = False
-		return self.session
 
 		# –––– S→C Commands ––––
 	def scc_started(self, par):
@@ -73,11 +73,13 @@ class connector(dict):
 	}
 
 	def handle_messages(self):
+		green = "\x1b\x5b1;32;40m"
+		normal = "\x1b\x5b0;37;40m"
 		while self.session:
 			cmd, par = self.server.poll_message(self.session)
 
 			if not cmd == None:
-				print "From server: {0}{1}".format(cmd,par)
+				print "{0}Broadcast: {1}{2}{3}".format(green,cmd,par,normal)
 
 			if len(par) > 0:
 				par = par[0]
@@ -92,9 +94,19 @@ class connector(dict):
 		self.msg_thread.start()
 
 	def cmd(self, command, params=()):
-		print "To server: {0}{1}".format(command,params)
-		answer = getattr(self.server,command)(*params)
-		print "\t{0}".format(answer)
+		red = "\x1b\x5b1;31;40m"
+		normal = "\x1b\x5b0;37;40m"
+
+		print "{0}To server: {1}{2}{3}".format(red,command,params,normal)
+		try:
+			answer = getattr(self.server,command)(*params)
+		except xmlrpclib.Fault:
+			print _("Server fault:")
+			raise
+			sys.exit(0)
+		if answer != None:
+			print "\t→ {0}".format(answer)
+		return answer
 
 	#def __getitem__(self, key):
     #	#try:

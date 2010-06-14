@@ -42,12 +42,15 @@ class LoginDialog(gtk.Dialog):
 		self.buttonbox  = gtk.VBox()
 		self.vbox.pack_start(self.buttonbox)
 
-		buttons = []
+		self.buttons = {}
 		#games = (['ABC', 'Open for everyone', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), False], ['Cba', 'Our private game', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), True])
 		games = connection.cmd("get_gamelist")
 		if not games == None:
 			for game in games:
-				button = gtk.Button()
+				try:
+					button = gtk.RadioButton(button)
+				except UnboundLocalError:
+					button = gtk.RadioButton()
 				if game[4]:
 					button.set_sensitive(False)
 					
@@ -61,7 +64,7 @@ class LoginDialog(gtk.Dialog):
 				box.pack_end(label, fill=True, expand=True)
 				
 				self.buttonbox.pack_end(button, fill=True, expand=True)
-				buttons.append(button)
+				self.buttons[button] = game[0]
 		else:
 			label = gtk.Label()
 			label.set_markup(_("<big>No active rooms found.</big>"))
@@ -99,7 +102,7 @@ class LoginDialog(gtk.Dialog):
 			self.buttonbox.hide()
 			self.nrtable.show_all()
 			new_room_button.hide()
-			self.add_button(_('Create'), 100).grab_default() #STOCK_GO_FORWARD
+			self.add_button(_('Create'), 200).grab_default() #STOCK_GO_FORWARD
 
 		reload_button = gtk.Button(_('Reload list'))
 		self.action_area.pack_end(reload_button)
@@ -108,6 +111,8 @@ class LoginDialog(gtk.Dialog):
 		new_room_button = gtk.Button(_('Create new room'))
 		self.action_area.pack_end(new_room_button)
 		new_room_button.connect("clicked", shownewroom)
+
+		self.add_button(_('Connect'), 100).grab_default() #STOCK_GO_FORWARD
 		
 		self.set_border_width(5)
 
