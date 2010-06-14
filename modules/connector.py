@@ -19,7 +19,6 @@ import threading
 import xmlrpclib
 import gettext
 import time
-import sys
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
@@ -103,7 +102,7 @@ class connector(dict):
 		except xmlrpclib.Fault:
 			print _("Server fault:")
 			raise
-			sys.exit(0)
+			__import__("sys").exit(0)
 		if answer != None:
 			print "\t→ {0}".format(answer)
 		return answer
