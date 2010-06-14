@@ -43,7 +43,6 @@ class LoginDialog(gtk.Dialog):
 		self.vbox.pack_start(self.buttonbox)
 
 		self.buttons = {}
-		#games = (['ABC', 'Open for everyone', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), False], ['Cba', 'Our private game', 'Lutoma', ('Lutoma', 'vIiRuS', 'Pixelmann'), True])
 		games = connection.cmd("get_gamelist")
 		if not games == None:
 			for game in games:
@@ -65,6 +64,7 @@ class LoginDialog(gtk.Dialog):
 				
 				self.buttonbox.pack_end(button, fill=True, expand=True)
 				self.buttons[button] = game[0]
+				
 		else:
 			label = gtk.Label()
 			label.set_markup(_("<big>No active rooms found.</big>"))
