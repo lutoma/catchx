@@ -94,5 +94,9 @@ if __name__ == '__main__':
 	
 	connection.login(game, options.login_nick)
 	game_win.logged_in(connection)
-			
-	gtk.main()
+	
+	try:
+		gtk.main()
+	except KeyboardInterrupt:
+		game_win.ev_leave(None)
+		
