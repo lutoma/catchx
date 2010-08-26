@@ -54,6 +54,7 @@ class Game(object):
 		self.broadcast('left', player.nick)	
 		
 	def start(self, nick):
+		if self.running: return
 		self.running = True
 		self.broadcast('started', nick)
 		FIGURES = ['blue','green','red','white','yellow']

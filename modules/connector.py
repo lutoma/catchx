@@ -75,7 +75,7 @@ class connector(dict):
 		green = "\x1b\x5b1;32;40m"
 		normal = "\x1b\x5b0;37;40m"
 		while self.session:
-			cmd, par = self.server.poll_message(self.session)
+			cmd, par = self.cmd("poll_message",(self.session,))
 
 			if len(par) > 0 and not isinstance(par[0], str):
 				par = par[0]
@@ -96,14 +96,23 @@ class connector(dict):
 		red = "\x1b\x5b1;31;40m"
 		normal = "\x1b\x5b0;37;40m"
 
-		print "{0}To server: {1}{2}{3}".format(red,command,params,normal)
+		# As poll_message is called 1+ times per second it might be a bit annoying to get a notice every time ;)
+		if command != "poll_message":
+			print "{0}To server: {1}{2}{3}".format(red,command,params,normal)
+
 		try:
 			answer = getattr(self.server,command)(*params)
+			
 		except xmlrpclib.Fault:
 			print _("Server fault:")
 			raise
 			__import__("sys").exit(0)
-		if answer != None:
+			
+		except __import__("socket").error:
+			print _("Lost connection to server (or couldn't establish one)")
+			__import__("sys").exit(0)
+			
+		if answer != None and command != "poll_message":
 			print "\t→ {0}".format(answer)
 		return answer
 
