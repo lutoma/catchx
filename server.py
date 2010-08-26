@@ -47,20 +47,20 @@ class Game(object):
 		
 	def add_player(self, player):
 		self.players.add(player)	
-		self.broadcast('joined', player.nick)	
+		self.broadcast('joined', (id(player),))	
 		
 	def del_player(self, player):
 		self.players.remove(player)
-		self.broadcast('left', player.nick)	
+		self.broadcast('left', (id(player),))	
 		
-	def start(self, nick):
+	def start(self, player):
 		if self.running: return
 		self.running = True
-		self.broadcast('started', nick)
+		self.broadcast('started', (id(player),))
 		FIGURES = ['blue','green','red','white','yellow']
 		players = []
 		for i in self.players:
-			players.append(i.nick)
+			players.append(id(i))
 		p_to_n = zip(players, self.players)
 		random.shuffle(players)
 		colors = ['misterx'] + random.sample(FIGURES, len(players)-1)
@@ -71,25 +71,17 @@ class Game(object):
 		for p in self.players:
 			p.push_message(cmd, *par)
 			
-	def chat(self, nick, msg):
-		self.broadcast('chat', (nick, msg))
+	def chat(self, player, msg):
+		self.broadcast('chat', (id(player), msg))
 	
-	def pmove(self, sid, x, y):
-		self.broadcast('pmove', (sid, x, y))
-
-
-class Session(object):
-
-	def __init__(self, game, player):
-		self.game = game
-		self.player = player
-
+	def pmove(self, pid, x, y):
+		self.broadcast('pmove', (pid, x, y))
 
 class CatchXServer(object):
 
 	def __init__(self):
 		self.games = dict()
-		self.sessions = dict()
+		self.players = dict()
 
 	def ping(self):
 		return 'pong'
@@ -106,15 +98,15 @@ class CatchXServer(object):
 		
 		player = Player(nick)
 		game.add_player(player)
+		player.game = game
 		
-		sid = str(uuid.uuid4())
-		self.sessions[sid] = Session(game, player)
-		
-		return sid
+		pid = id(player)
+		self.players[pid] = player
+		return pid
 			
-	def get_playerlist(self, sid):
+	def get_playerlist(self, pid):
 		players = []
-		for i in self.sessions[sid].game.players:
+		for i in self.players[pid].game.players:
 			players.append(i.nick)
 		return players
 
@@ -131,24 +123,24 @@ class CatchXServer(object):
 		except:
 			return []
 
-	def poll_message(self, sid):
-		if self.sessions[sid].player.has_messages(): 
-			return self.sessions[sid].player.pop_message()	
+	def poll_message(self, pid):
+		if self.players[pid].has_messages(): 
+			return self.players[pid].pop_message()	
 		else: return None, ()
 		
-	def say(self, sid, msg):
-		self.sessions[sid].game.chat(self.sessions[sid].player.nick, msg)
+	def say(self, pid, msg):
+		self.players[pid].game.chat(self.players[pid], msg)
 	
-	def pmove(self, sid, x, y):
-		self.sessions[sid].game.pmove(sid, x, y)
+	def pmove(self, pid, x, y):
+		self.players[pid].game.pmove(pid, x, y)
 	
-	def start_game(self, sid):
-		self.sessions[sid].game.start(self.sessions[sid].player.nick)
+	def start_game(self, pid):
+		self.players[pid].game.start(self.players[pid])
 		
-	def logout(self, sid):
-		session = self.sessions[sid]
-		session.game.del_player(session.player)
-		del self.sessions[sid]
+	def logout(self, pid):
+		player = self.players[pid]
+		player.game.del_player(player)
+		del self.players[pid]
 					
 					
 if __name__ == "__main__":
