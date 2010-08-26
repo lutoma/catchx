@@ -18,7 +18,6 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from optparse import OptionParser
 
-import uuid
 from collections import deque
 import random
 
