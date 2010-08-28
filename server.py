@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 
+# Yay, this might get an price for the worst-commented code ever. But please don't blame us, we didn't think any other human might ever read this.
+
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from optparse import OptionParser
 
@@ -26,6 +28,8 @@ class Player(object):
 	def __init__(self, nick):
 		self.msgqueue = deque()
 		self.nick = nick
+		self.color = None
+		self.position = None
 		
 	def has_messages(self):
 		return len(self.msgqueue) > 0
@@ -38,19 +42,19 @@ class Player(object):
 
 
 class Game(object):
-	
+
 	def __init__(self, description):
-		self.players = set()
+		self.players = dict()
 		self.description = description
 		self.running = False
 		
 	def add_player(self, player):
-		self.players.add(player)	
-		self.broadcast('joined', (id(player),))	
-		
-	def del_player(self, player):
-		self.players.remove(player)
-		self.broadcast('left', (id(player),))	
+		self.players[id(player)] = player
+		self.broadcast('joined', (id(player),player.nick))	
+
+	def del_player(self, pid):
+		del self.players[pid]
+		self.broadcast('left', (id(pid),))	
 		
 	def start(self, player):
 		if self.running: return
@@ -59,22 +63,24 @@ class Game(object):
 		FIGURES = ['blue','green','red','white','yellow']
 		players = []
 		for i in self.players:
-			players.append(id(i))
-		p_to_n = zip(players, self.players)
-		random.shuffle(players)
+			players.append(i)
+		#random.shuffle(players)
 		colors = ['misterx'] + random.sample(FIGURES, len(players)-1)
-		assoc = zip(colors, players)
+		assoc = zip(players, colors)
 		self.broadcast('color_assoc', assoc)
-	
+		for i in assoc:
+			self.players[i[0]].color = i[1]
+
 	def broadcast(self, cmd, *par):
 		for p in self.players:
-			p.push_message(cmd, *par)
+			self.players[p].push_message(cmd, *par)
 			
 	def chat(self, player, msg):
 		self.broadcast('chat', (id(player), msg))
 	
 	def pmove(self, pid, x, y):
-		self.broadcast('pmove', (pid, x, y))
+		if self.players[pid].color != "misterx":
+			self.broadcast('pmove', (pid, x, y))
 
 class CatchXServer(object):
 
@@ -93,7 +99,7 @@ class CatchXServer(object):
 	def login(self, gid, nick):
 		game = self.games[gid]
 		
-		if game.running: return 'running!'
+		if game.running: return False
 		
 		player = Player(nick)
 		game.add_player(player)
@@ -106,7 +112,7 @@ class CatchXServer(object):
 	def get_playerlist(self, pid):
 		players = []
 		for i in self.players[pid].game.players:
-			players.append(i.nick)
+			players.append((id(self.players[i]), self.players[i].nick))
 		return players
 
 	def get_gamelist(self):
@@ -115,7 +121,7 @@ class CatchXServer(object):
 			game = self.games[gameName]
 			players= []
 			for player in game.players:
-				players.append(player.nick)
+				players.append(game.players[player].nick)
 			games.append([gameName, game.description, 'Someone', players, game.running])
 		try:
 			return games
@@ -124,9 +130,9 @@ class CatchXServer(object):
 
 	def poll_message(self, pid):
 		if self.players[pid].has_messages(): 
-			return self.players[pid].pop_message()	
+			return self.players[pid].pop_message()
 		else: return None, ()
-		
+
 	def say(self, pid, msg):
 		self.players[pid].game.chat(self.players[pid], msg)
 	
@@ -138,10 +144,12 @@ class CatchXServer(object):
 		
 	def logout(self, pid):
 		player = self.players[pid]
-		player.game.del_player(player)
+		player.game.del_player(pid)
+		if(len(player.game.players) == 0):
+			del self.games[dict([(v, k) for (k, v) in self.games.iteritems()])[player.game]]
 		del self.players[pid]
-					
-					
+
+
 if __name__ == "__main__":
 	parser = OptionParser()
 	parser.add_option("-p", "--port", dest="port", default=20211,

@@ -24,6 +24,7 @@ import time
 import locale
 import gettext
 from modules import connector as connector
+from modules import playerobj as playerobj
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
@@ -32,7 +33,7 @@ class AboutDialog(gtk.AboutDialog):
 	def __init__(self):
 		gtk.AboutDialog.__init__(self)
 		self.set_name(_("CatchX"))
-		self.set_copyright(_("© 2009 CatchX Team"))
+		self.set_copyright(_("© 2009-2010 CatchX Team"))
 		self.set_website(_("http://www.catchx.net"))
 		self.set_license("""CatchX is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -41,8 +42,8 @@ CatchX is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 You should have received a copy of the GNU General Public License along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 """)
 		self.set_comments(_("“Quick, before it's too late!”"))
-		self.set_authors((("- Lukas Martini (Main developer)"), ("- Raphael Michel (Main developer)"), ("- Benjamin Richter (Quality assurance)"), ("- Phillip Thelen (Contributor)")))
-		self.set_artists((("- Robin Eberhard"),))
+		self.set_authors((("Lukas Martini (Main developer)"), ("Raphael Michel (Main developer)"), ("Benjamin Richter (Quality assurance)"), ("Phillip Thelen (Contributor)")))
+		self.set_artists((("Robin Eberhard"),))
 		self.set_logo(gtk.gdk.pixbuf_new_from_file("img/logo.png"))
 		self.set_wrap_license(True)
 
@@ -98,20 +99,37 @@ class PlayerlistWidget(gtk.VBox):
 
 	def __init__(self):
 		gtk.VBox.__init__(self)
+
+		# create a TreeStore with one string column to use as the model
+		self.listStore = gtk.ListStore(str,str)
+
 		
-		self.liststore = gtk.ListStore(str)
-		self.treeview = gtk.TreeView(self.liststore)
-		self.tvcolumn1 = gtk.TreeViewColumn('Name')
-		
-		self.liststore.append(['Lutoma'])
-		self.liststore.append(['Rami'])
-		self.treeview.append_column(self.tvcolumn1)
-		self.cell1 = gtk.CellRendererText()
-		self.tvcolumn1.pack_start(self.cell1, True)
-		self.tvcolumn1.set_attributes(self.cell1, text=2,
-                                      cell_background_set=3)
-	
-		self.pack_start(self.treeview)
+
+		treeView = gtk.TreeView(self.listStore)
+
+		nameColumn = gtk.TreeViewColumn('Name')
+		moneyColumn = gtk.TreeViewColumn('Money')
+
+		treeView.append_column(nameColumn)
+		treeView.append_column(moneyColumn)
+
+		nameCell = gtk.CellRendererText()
+		moneyCell = gtk.CellRendererText()
+
+		nameColumn.pack_start(nameCell, True)
+		moneyColumn.pack_start(moneyCell, True)
+
+		nameColumn.add_attribute(nameCell, 'text', 0)
+		moneyColumn.add_attribute(moneyCell, 'text', 1)
+
+		# make it searchable
+		#self.treeview.set_search_column(0)
+
+		# Allow sorting on the column
+		nameColumn.set_sort_column_id(0)
+		moneyColumn.set_sort_column_id(1)
+
+		self.add(treeView)
 
 class GameMainMenuBar(gtk.MenuBar):
 
@@ -205,8 +223,8 @@ class GameWindow(gtk.Window):
 	def ev_stop(self, ev):
 		print "Not implemented yet (And probably it'll never be)."
 		#self.connection.cmd("stop_game", (self.connection.session,))
-		self.menu_bar.game_start.set_sensitive(True)
-		self.menu_bar.game_stop.set_sensitive(False)
+		#self.menu_bar.game_start.set_sensitive(True)
+		#self.menu_bar.game_stop.set_sensitive(False)
 
 	def ev_toggle_chat(self, ev):
 		if ev.get_active():
@@ -233,7 +251,13 @@ class GameWindow(gtk.Window):
 	def logged_in(self, connection):
 		self.connection = connection
 		self.connection.run()
-		self.chat_update(_("* Players: {0}").format(', '.join(self.connection.cmd("get_playerlist", (self.connection.session,)))))
+		
+		playerlist = self.connection.cmd("get_playerlist", (self.connection.session,))
+		for i in playerlist:
+			if not i[0] in self.connection.players:
+				tplayer  = playerobj.Player(i[0], i[1]) # PID, Nick
+				self.connection.players[i[0]] = tplayer
+				tplayer.listStoreIter = self.playerlist.listStore.append([i[1], "{0}€".format(tplayer.money)])
 	
 	def __init__(self):
 		gtk.Window.__init__(self)

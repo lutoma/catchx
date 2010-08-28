@@ -25,6 +25,7 @@ import gettext
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
+
 class MapWidget(gtk.Table):
 	def img_size(self, img):
 		pixbuf = img.get_pixbuf()
@@ -35,7 +36,7 @@ class MapWidget(gtk.Table):
 		self.map_layout.put(self.lay, -100, -100)
 		self.map_layout.remove(self.buttonbox)
 		self.map_layout.put(self.buttonbox, -100, -100)
-		self.tself.connection.cmd("pmove", (self.tself.connection.session, int(round(self.lastclick['x'],0)), int(round(self.lastclick['y'],0)))) #yeah! self.tself.!  super() kinda sucks
+		self.tself.connection.cmd("pmove", (self.tself.connection.session, int(round(self.lastclick['x'],0)), int(round(self.lastclick['y'],0))))
 		
 	def map_click(self, eventbox, button):
 		if not self.tself.connection.started:
@@ -59,7 +60,7 @@ class MapWidget(gtk.Table):
 		self.map_layout = gtk.Layout()
 		self.event_box.add(self.map_layout)
 		#self.pack_start(self.map_layout, expand=True, fill=True)
-		
+
 		self.copyright = gtk.Label(_("Map © 2005 André Flöter"))
 
 		# ———— Weißer hintergrund ————
@@ -89,13 +90,12 @@ class MapWidget(gtk.Table):
 				
                                
 		FIGURES = ('blue','green','misterx','red','white','yellow')
-		x,y = 0, 0
+		self.figures = dict()
 		for c in FIGURES:
-			x += 30
-			y += 30
-			self.figure = gtk.Image()	
-			self.figure.set_from_file("img/figures/{0}.png".format(c))
-			self.map_layout.put(self.figure, x, y)
+			figure = gtk.Image()	
+			figure.set_from_file("img/figures/{0}.png".format(c))
+			self.map_layout.put(figure, -100, -100)
+			self.figures[c] = figure
 
 		self.lay = gtk.Image()	
 		self.lay.set_from_file("img/overlay.png")

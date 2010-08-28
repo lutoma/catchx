@@ -19,6 +19,7 @@ import threading
 import xmlrpclib
 import gettext
 import time
+from modules import playerobj as playerobj
 
 t = gettext.translation("catchx", "locale")
 _ = t.ugettext
@@ -26,40 +27,50 @@ _ = t.ugettext
 class connector(dict):
 	def __init__(self, server, port, ui):
 		self.ui = ui
+		self.players = dict()
 		self.server = xmlrpclib.ServerProxy('http://{0}:{1}'.format(server, port))
-
+		
 	def login(self, game, nick):
 		self.session = self.cmd("login", (game, nick))
 		self.started = False
 
 		# –––– S→C Commands ––––
 	def scc_started(self, par):
-		self.ui.chat_update(_("* {0} started the game").format(par[0]))
+		self.ui.chat_update(_("* {0} started the game").format(self.players[par[0]].nick))
 		self.started = True
 
 	def scc_chat(self, par):
+		nick = self.players[par[0]].nick
 		if '/me ' in par[1]:
-			self.ui.chat_update("* {0} {1}".format(par[0], par[1][4:]))
+			self.ui.chat_update("* {0} {1}".format(nick, par[1][4:]))
 		else:
-			self.ui.chat_update("{0}: {1}".format(par[0], par[1]))
+			self.ui.chat_update("{0}: {1}".format(nick, par[1]))
 
 	def scc_pmove(self, par):
-		self.ui.map.map_layout.remove(self.ui.map.figure)
-		self.ui.map.map_layout.put(self.ui.map.figure, int(round(par[1] - 16,0)), int(round(par[2] - 45, 0)))
+		color = self.players[par[0]].color
+		self.ui.map.map_layout.remove(self.ui.map.figures[color])
+		self.ui.map.map_layout.put(self.ui.map.figures[color], int(round(par[1] - 16,0)), int(round(par[2] - 45, 0)))
 				
 	def scc_joined(self, par):
-		self.ui.chat_update(_("* {0} entered the room").format(par[0]))
+		if not par[0] in self.players:
+			tplayer = playerobj.Player(par[0], par[1]) # PID, Nick
+			self.players[par[0]] = tplayer
+			self.players[par[0]].listStoreIter = self.ui.playerlist.listStore.append([par[1],"{0}€".format(self.players[par[0]].money)])
+		self.ui.chat_update(_("* {0} entered the room").format(par[1]))
 		
 	def scc_left(self, par):
-		self.ui.chat_update(_("* {0} left the room").format(par[0]))
+		del self.players[par[0]]
+		self.ui.chat_update(_("* {0} left the room").format(self.players[par[0]].nick))
 		
 	def scc_color_assoc(self, par):
 		self.color_assoc = par
-		for player in par:
-			if player[0] == 'misterx':
-				self.ui.chat_update(_("* {0} is the Mister X!").format(player[1]))
+		for thisPlayer in par:
+			player = self.players[thisPlayer[0]]
+			player.color = thisPlayer[1]
+			if thisPlayer[1] == 'misterx':
+				self.ui.chat_update(_("* {0} is the Mister X!").format(player.nick))
 			else:
-				self.ui.chat_update(_("* {0} is the {1} player!").format(player[1], player[0]))
+				self.ui.chat_update(_("* {0} is the {1} player!").format(player.nick, thisPlayer[1]))
 
 	# –––– Command → Function assoc ––––
 	commands = {

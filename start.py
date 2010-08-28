@@ -15,6 +15,8 @@
 #
 #	You should have received a copy of the GNU General Public License
 #	along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
+
+__import__("pygtk").require('2.0')
 import gtk
 import sys
 import locale

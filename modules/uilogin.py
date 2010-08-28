@@ -44,7 +44,7 @@ class LoginDialog(gtk.Dialog):
 
 		self.buttons = {}
 		games = connection.cmd("get_gamelist")
-		if not games == None:
+		if not games == []:
 			for game in games:
 				try:
 					button = gtk.RadioButton(button)
