@@ -21,8 +21,9 @@ import gettext
 import time
 from modules import playerobj as playerobj
 
-t = gettext.translation("catchx", "locale")
-_ = t.ugettext
+gettext.bindtextdomain('catchx', 'locale')
+gettext.textdomain('catchx')
+_ = gettext.gettext
 
 class connector(dict):
 	def __init__(self, server, port, ui):

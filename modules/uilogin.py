@@ -20,8 +20,9 @@ import gobject
 import gtk
 import gettext
 
-t = gettext.translation("catchx", "locale")
-_ = t.ugettext
+gettext.bindtextdomain('catchx', 'locale')
+gettext.textdomain('catchx')
+_ = gettext.gettext
 
 class LoginDialog(gtk.Dialog):
 

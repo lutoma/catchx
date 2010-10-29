@@ -23,8 +23,9 @@ import gettext
 #### Needed: Cleanup of this file. ####
 #######################################
 
-t = gettext.translation("catchx", "locale")
-_ = t.ugettext
+gettext.bindtextdomain('catchx', 'locale')
+gettext.textdomain('catchx')
+_ = gettext.gettext
 
 class MapWidget(gtk.Table):
 	def img_size(self, img):

@@ -57,8 +57,11 @@ if __name__ == '__main__':
 	session = None
 	
 	#translation
-	t = gettext.translation("catchx", "locale")
-	_ = t.ugettext
+
+	gettext.bindtextdomain('catchx', 'locale')
+	gettext.textdomain('catchx')
+	_ = gettext.gettext
+
 	print _('Starting {0} v{1}').format(APP_NAME, APP_VER)
 
 	game_win = ui.GameWindow()

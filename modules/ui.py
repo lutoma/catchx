@@ -26,8 +26,10 @@ import gettext
 from modules import connector as connector
 from modules import playerobj as playerobj
 
-t = gettext.translation("catchx", "locale")
-_ = t.ugettext
+gettext.bindtextdomain('catchx', 'locale')
+gettext.textdomain('catchx')
+_ = gettext.gettext
+
 class AboutDialog(gtk.AboutDialog):
 	
 	def __init__(self):

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ..
+#cd ..
 mkdir -p locale
 
 cd i18n
