@@ -77,7 +77,8 @@ class Game(object):
 			self.players[p].push_message(cmd, *par)
 			
 	def chat(self, player, msg):
-		self.broadcast('chat', (id(player), msg))
+		if msg != '' and msg != None:
+			self.broadcast('chat', (id(player), msg))
 	
 	def pmove(self, pid, x, y):
 		if self.players[pid].color != "misterx":
