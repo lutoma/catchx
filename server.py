@@ -16,7 +16,8 @@
 #    along with CatchX.  If not, see <http://www.gnu.org/licenses/>.
 
 # Yay, this might get an price for the worst-commented code ever. But please don't blame us, we didn't think any other human might ever read this.
-
+import logging
+import os
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from optparse import OptionParser
 
@@ -150,15 +151,54 @@ class CatchXServer(object):
 		del self.players[pid]
 
 
+def daemonize(pidfile):
+	log.info('Daemonizing')
+	try:
+		pid = os.fork()
+	except OSError, e:
+		log.exception('Couldn\'t fork!')
+		raise Exception, "%s [%d]" % (e.strerror, e.errno)
+
+	if (pid != 0):
+		logging.info('Forked with PID {0}'.format(pid))
+		f = open(pidfile, 'w')
+		f.write(str(pid) + '\n')
+		f.close()
+		os._exit(0)
+
 if __name__ == "__main__":
+	logging.basicConfig()
+	log = logging.getLogger("catchxd")
+
 	parser = OptionParser()
+        parser.add_option("-a", "--address", dest="address", default="0.0.0.0",
+                                          help="Address to bind to", metavar="ADDRESS")
 	parser.add_option("-p", "--port", dest="port", default=20211,
 					  help="specifies port to listen on", type="int", metavar="PORT")
+	parser.add_option("-d", "--daemon", action="store_true", dest="daemon", default=False,
+					  help="run as daemon")
+	parser.add_option("-D", "--debug", action="store_true", dest="debug", default=False,
+					  help="run in debug mode")
+	parser.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False,
+					  help="run silently")
+        parser.add_option("-P", "--file", dest="pidfile", default="/var/run/catchx.pid",
+                                          help="Where to save PID", metavar="FILE")
+
 	(options, args) = parser.parse_args()
+
+	if options.debug:
+		log.setLevel(logging.DEBUG)
+	elif not options.quiet:
+		log.setLevel(logging.INFO)
+
+	log.info('Starting catchxd')
+	if options.daemon:
+		daemonize(options.pidfile)
 	
-	server = SimpleXMLRPCServer(('', options.port), allow_none=True)
+	server = SimpleXMLRPCServer((options.address, options.port), allow_none=True)
 	server.register_introspection_functions()
 	server.register_instance(CatchXServer())
+	
 	try:
 		server.serve_forever()
 	except KeyboardInterrupt:
